@@ -1,0 +1,47 @@
+
+package stateSolve;
+
+public class CrosswordState {
+    
+    private String[][] m1 = {{"a", "a", "a", "a", "a"}, // labirinto zerado
+                            {"a", "#", "a", "#", "a"},
+                            {"a", "a", "a", "a", "a"},
+                            {"a", "#", "a", "#", "a"},
+                            {"a", "a", "a", "a", "a"}};
+    
+    private String[][] m = {{"#", "a", "#", "a", "#"}, // labirinto zerado
+                             {"a", "a", "a", "a", "a"},
+                             {"#", "a", "#", "a", "#"},
+                             {"a", "a", "a", "a", "a"},
+                             {"#", "a", "#", "a", "#"}};
+    
+//    private List<>
+    
+    public CrosswordState() {}
+
+    public CrosswordState(CrosswordState s) {
+        for ( int r = 0; r < 5; r++ ) {
+            for ( int c = 0; c < 5; c++ ) {
+                this.m[r][c] = s.m[r][c];
+            }
+        }
+    }
+    
+    public String get(int r, int c) { return this.m[r][c]; }
+    public void set(int r, int c, String v) { this.m[r][c] = v; }
+    
+    @Override
+    public String toString() {
+        String s = "";
+        
+        for ( int r = 0; r < 5; r++ ) {
+            for ( int c = 0; c < 5; c++ ) {
+                s += this.m[r][c];
+            }
+            
+            s += '\n';
+        }
+        
+        return s;
+    }        
+}
