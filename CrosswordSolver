@@ -12,14 +12,34 @@ package stateSolve;
 public class CrosswordSolver {
     // contador de estados gerados
     public static int count = 0;
+    public static ArrayList horizontalWords = new ArrayList(), verticalWords = new ArrayList(), words = new ArrayList();
     
     public static boolean solve(CrosswordState state) {
         count++;
         System.out.println(state);
         
         // obtém posição atual
-        int r = state.getRow();
-        int c = state.getCol();
+        int r = state.getCurrentRow();
+        int c = state.getCurrentColumn();
+
+        if (r == 5) return true;
+        if (state.get(r, c) == "#") {
+//            System.out.println(state.get(r, c));
+            state.setCurretnColumn(state.getCurrentColumn() + 1);
+            solve(state);
+        }
+        if (state.get(r, c) == "a") {
+            verifyWordDirection(state, r, c);
+//            System.out.println(state.get(r, c));
+            state.setCurretnColumn(state.getCurrentColumn() + 1);
+            solve(state);
+        }
+        if (state.get(r, c) == "0") {
+//            System.out.println(state.get(r, c));
+            state.setCurrentRow(state.getCurrentRow() + 1);
+            state.setCurretnColumn(0);
+            solve(state);
+        }
     
         /*if (state.get(r, c) == 4) { // saída encontrada
             System.out.println("EXIT FOUND!");
@@ -50,10 +70,59 @@ public class CrosswordSolver {
         
         return false; // tudo mais falhou, retorne falso
     }
+
+    public static CrosswordState verifyWordDirection(CrosswordState state, int r, int c){
+        if(state.get(r, c + 1) == "a") return resolvHorizontalWord(state, r, c);
+        if(state.get(r + 1, c) == "a") return resolvVerticalWord(state, r, c);
+        return state;
+    }
+    public static CrosswordState resolvHorizontalWord(CrosswordState state, int r, int c){
+        if(c != 0) return state;
+        System.out.println("Horizontal");
+        if(horizontalWords.isEmpty()){
+            System.out.println("Linha: " + r + " Coluna: " + c);
+            for(int i = 0; i < 5; i++){
+                System.out.print(state.get(r, c + i));
+            }
+            System.out.print("\n");
+            horizontalWords.add("A");
+        }else{
+            System.out.println("Linha: " + r + " Coluna: " + c);
+            for(int i = 0; i < 5; i++){
+                System.out.print(state.get(r, c + i));
+            }
+            System.out.print("\n");
+        }
+        return  state;
+    }
+    public static CrosswordState resolvVerticalWord(CrosswordState state, int r, int c){
+        if(r != 0) return state;
+        System.out.println("Vertical");
+        if(verticalWords.isEmpty()){
+            System.out.println("Linha: " + r + " Coluna: " + c);
+            for(int i = 0; i < 5; i++){
+                System.out.println(state.get(r + i, c));
+            }
+            System.out.print("\n");
+            verticalWords.add("A");
+        }else{
+            System.out.println("Linha: " + r + " Coluna: " + c);
+            for(int i = 0; i < 5; i++){
+                System.out.println(state.get(r + i, c));
+            }
+            System.out.print("\n");
+        }
+        return state;
+    }
     
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
         CrosswordState first = new CrosswordState();
+
+        SimpleReader file = new SimpleReader("C:\\Users\\Martin\\IdeaProjects\\Estrutura de Dados 2\\Projeto 2\\src\\src\\palavras-5.txt");
+        file.createWordMap();
+        words = file.getWordsMap();
+//        System.out.println(words);
         
         solve(first);
         
