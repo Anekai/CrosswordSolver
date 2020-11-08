@@ -3,18 +3,23 @@ package stateSolve;
 
 public class CrosswordState {
     
-    private String[][] m1 = {{"a", "a", "a", "a", "a"}, // labirinto zerado
-                            {"a", "#", "a", "#", "a"},
-                            {"a", "a", "a", "a", "a"},
-                            {"a", "#", "a", "#", "a"},
-                            {"a", "a", "a", "a", "a"}};
+    private String[][] m1 = {
+        {"a", "a", "a", "a", "a"}, // labirinto zerado
+        {"a", "#", "a", "#", "a"},
+        {"a", "a", "a", "a", "a"},
+        {"a", "#", "a", "#", "a"},
+        {"a", "a", "a", "a", "a"}
+    };
     
-    private String[][] m = {{"#", "a", "#", "a", "#"}, // labirinto zerado
-                             {"a", "a", "a", "a", "a"},
-                             {"#", "a", "#", "a", "#"},
-                             {"a", "a", "a", "a", "a"},
-                             {"#", "a", "#", "a", "#"}};
-    
+    private String[][] m = {
+        {"#", "a", "#", "a", "#"}, // labirinto zerado
+        {"a", "a", "a", "a", "a"},
+        {"#", "a", "#", "a", "#"},
+        {"a", "a", "a", "a", "a"},
+        {"#", "a", "#", "a", "#"}
+    };
+    private int currentRow = 0;
+    private int currentColumn = 0;
 //    private List<>
     
     public CrosswordState() {}
@@ -27,7 +32,13 @@ public class CrosswordState {
         }
     }
     
-    public String get(int r, int c) { return this.m[r][c]; }
+    public String get(int r, int c) {
+        try{
+            return this.m[r][c];
+        }catch (Exception e){
+            return "0";
+        }
+    }
     public void set(int r, int c, String v) { this.m[r][c] = v; }
     
     @Override
@@ -43,5 +54,10 @@ public class CrosswordState {
         }
         
         return s;
-    }        
+    }
+
+    public void setCurrentRow(int currentRow) { this.currentRow = currentRow; }
+    public void setCurretnColumn(int curretnLine){ this.currentColumn = curretnLine; }
+    public int getCurrentRow(){ return this.currentRow; }
+    public int getCurrentColumn(){ return this.currentColumn; }
 }
