@@ -1,34 +1,124 @@
 
 package stateSolve;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CrosswordState {
     
-    private String[][] m1 = {{"a", "a", "a", "a", "a"}, // labirinto zerado
-                            {"a", "#", "a", "#", "a"},
-                            {"a", "a", "a", "a", "a"},
-                            {"a", "#", "a", "#", "a"},
-                            {"a", "a", "a", "a", "a"}};
+    private String[][] m2 = {{"_", "_", "_", "_", "_"}, // labirinto zerado
+                             {"_", "#", "_", "#", "_"},
+                             {"_", "_", "_", "_", "_"},
+                             {"_", "#", "_", "#", "_"},
+                             {"_", "_", "_", "_", "_"}};
     
-    private String[][] m = {{"#", "a", "#", "a", "#"}, // labirinto zerado
-                             {"a", "a", "a", "a", "a"},
-                             {"#", "a", "#", "a", "#"},
-                             {"a", "a", "a", "a", "a"},
-                             {"#", "a", "#", "a", "#"}};
+    private String[][] m1 = {{"#", "_", "#", "_", "#"}, // labirinto zerado
+                             {"_", "_", "_", "_", "_"},
+                             {"#", "_", "#", "_", "#"},
+                             {"_", "_", "_", "_", "_"},
+                             {"#", "_", "#", "_", "#"}};
     
-//    private List<>
+    private int horizontalWordCount = 0;
+    private int verticalWordCount = 0;
+    private int wordCount = 0;
     
-    public CrosswordState() {}
+    private List<Word> words = new ArrayList<>();
+    
+    public CrosswordState() {
+        boolean validLine = true;
+        
+        for ( int r = 0; r < 5; r++ ) {
+            for ( int c = 0; c < 5; c++ ) {
+                validLine = validLine && this.m2[r][c].equals("_");
+            }
+            
+            if ( validLine ) {
+                words.add(new Word(null, true, r, 0));
+                horizontalWordCount++;
+            }
+            
+            validLine = true;
+        }
+        
+        for ( int c = 0; c < 5; c++ ) {
+            for ( int r = 0; r < 5; r++ ) {
+                validLine = validLine && this.m2[r][c].equals("_");
+            }
+            
+            if ( validLine ) {
+                words.add(new Word(null, false, 0, c));
+                verticalWordCount++;
+            }
+            
+            validLine = true;
+        }
+    }
 
     public CrosswordState(CrosswordState s) {
         for ( int r = 0; r < 5; r++ ) {
             for ( int c = 0; c < 5; c++ ) {
-                this.m[r][c] = s.m[r][c];
+                this.m2[r][c] = s.m2[r][c];
             }
         }
+        
+        for ( Word word : s.words ) {
+            this.words.add(new Word(word.word, word.horizontal, word.row, word.column));
+        }
+        
+        this.horizontalWordCount = s.horizontalWordCount;
+        this.verticalWordCount = s.verticalWordCount;
+        this.wordCount = s.wordCount;
+    }
+
+    public int getWordCount() { return wordCount; }
+    
+    public int getWordSlots() { return words.size(); }
+    
+    public boolean addWord(String word) {
+        for ( Word w : words ) {
+            if ( w.word == null ) {
+                w.word = word;
+                
+                String[] splitWord = w.word.split("");
+                
+                if ( w.horizontal ) {
+                    for ( int c = 0; c < 5; c++ ) {
+                        if ( this.m2[w.row][c].equals("_") ) {
+                            this.m2[w.row][c] = splitWord[c];
+                        } else if ( !this.m2[w.row][c].equals(splitWord[c]) ) {
+                            return false;
+                        }
+                    }
+                    
+                    wordCount++;
+                    return true;
+                } else {
+                    for ( int r = 0; r < 5; r++ ) {
+                        if ( this.m2[r][w.column].equals("_") ) {
+                            this.m2[r][w.column] = splitWord[r];
+                        } else if ( !this.m2[r][w.column].equals(splitWord[r]) ) {
+                            return false;
+                        }
+                    }
+                    
+                    wordCount++;
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
-    public String get(int r, int c) { return this.m[r][c]; }
-    public void set(int r, int c, String v) { this.m[r][c] = v; }
+    public boolean containsWord(String word) {
+        for ( Word w : words ) {
+            if ( w.word != null && w.word.equals(word) ) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
     @Override
     public String toString() {
@@ -36,12 +126,27 @@ public class CrosswordState {
         
         for ( int r = 0; r < 5; r++ ) {
             for ( int c = 0; c < 5; c++ ) {
-                s += this.m[r][c];
+                s += this.m2[r][c];
             }
             
             s += '\n';
         }
         
         return s;
-    }        
+    }
+    
+    private class Word {
+
+        private String word;
+        private boolean horizontal;
+        private int row;
+        private int column;
+        
+        public Word(String word, boolean horizontal, int row, int column) {
+            this.word = word;
+            this.horizontal = horizontal;
+            this.row = row;
+            this.column = column;
+        }
+    }
 }
